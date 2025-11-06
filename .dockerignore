@@ -1,0 +1,35 @@
+# Binaries
+bin/
+*.test
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Documentation
+*.md
+docs/
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# Build artifacts
+coverage.out
+cover.out
+
+# Config samples (not needed in image)
+config/samples/
+
+# Test files
+*_test.go
+
+# Deployment scripts
+deploy.sh
+undeploy.sh

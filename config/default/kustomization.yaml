@@ -1,0 +1,23 @@
+# Kustomization for deploying AlibabaCloud-EIP-Operator
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# 部署顺序：按照此文件中的顺序应用资源
+resources:
+# 1. Namespace
+- namespace.yaml
+
+# 2. CRD
+- ../crd/eip.alibabacloud.com_eips.yaml
+
+# 3. RBAC
+- ../rbac/service_account.yaml
+- ../rbac/role.yaml
+- ../rbac/role_binding.yaml
+
+# 4. Configuration
+- configmap.yaml
+- credentials.yaml
+
+# 5. Deployment
+- ../manager/manager.yaml

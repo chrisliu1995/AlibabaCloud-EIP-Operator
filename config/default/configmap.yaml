@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alibabacloud-eip-operator-config
+  namespace: alibabacloud-eip-operator-system
+data:
+  ctrl-config.yaml: |
+    regionID: cn-hangzhou
+    kubeClientQPS: 50
+    kubeClientBurst: 100

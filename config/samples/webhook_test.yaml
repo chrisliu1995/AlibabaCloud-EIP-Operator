@@ -1,0 +1,43 @@
+---
+# 测试用例1: 电信单线 + 按流量付费（应该被拒绝）
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-test-telecom-invalid
+  namespace: default
+spec:
+  bandwidth: "5"
+  internetChargeType: PayByTraffic  # 错误：单线必须用 PayByBandwidth
+  isp: ChinaTelecom
+  name: test-eip-invalid
+  description: "This should be rejected by webhook"
+  releaseStrategy: OnDelete
+
+---
+# 测试用例2: 电信单线 + 按带宽付费（应该成功）
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-test-telecom-valid
+  namespace: default
+spec:
+  bandwidth: "5"
+  internetChargeType: PayByBandwidth  # 正确：单线使用按带宽付费
+  isp: ChinaTelecom
+  name: test-eip-valid
+  description: "This should be accepted by webhook"
+  releaseStrategy: OnDelete
+
+---
+# 测试用例3: BGP + 按流量付费（应该成功）
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-test-bgp-traffic
+  namespace: default
+spec:
+  bandwidth: "5"
+  internetChargeType: PayByTraffic  # 正确：BGP 可以按流量付费
+  name: test-eip-bgp
+  description: "BGP with PayByTraffic"
+  releaseStrategy: OnDelete

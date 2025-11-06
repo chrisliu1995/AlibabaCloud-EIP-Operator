@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alibabacloud-eip-operator-controller-manager
+  namespace: alibabacloud-eip-operator-system
+  labels:
+    app: alibabacloud-eip-operator
+    control-plane: controller-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alibabacloud-eip-operator
+      control-plane: controller-manager
+  template:
+    metadata:
+      labels:
+        app: alibabacloud-eip-operator
+        control-plane: controller-manager
+    spec:
+      serviceAccountName: alibabacloud-eip-operator-controller-manager
+      containers:
+      - name: manager
+        image: registry.cn-beijing.aliyuncs.com/chrisliu95/alibabacloud-eip-operator:v1.0.0
+        imagePullPolicy: Always
+        command:
+        - /manager
+        args:
+        - --leader-elect
+        - --config=/etc/config/ctrl-config.yaml
+        - --credential=/etc/credential/ctrl-secret.yaml
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+          readOnly: true
+        - name: credentials
+          mountPath: /etc/credential
+          readOnly: true
+        - name: cert
+          mountPath: /tmp/k8s-webhook-server/serving-certs
+          readOnly: true
+        ports:
+        - containerPort: 9443
+          name: webhook-server
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 500m
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8081
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8081
+          initialDelaySeconds: 5
+          periodSeconds: 10
+      volumes:
+      - name: config
+        configMap:
+          name: alibabacloud-eip-operator-config
+      - name: credentials
+        secret:
+          secretName: alibabacloud-eip-operator-credentials
+      - name: cert
+        secret:
+          defaultMode: 420
+          secretName: webhook-server-cert
+      terminationGracePeriodSeconds: 10

@@ -1,0 +1,63 @@
+---
+# 示例1: 创建新的EIP
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-sample-new
+spec:
+  bandwidth: "5"
+  internetChargeType: PayByTraffic
+  name: my-eip-instance
+  description: "EIP created by alibabacloud-eip-operator"
+  releaseStrategy: OnDelete
+  tags:
+    env: test
+    owner: admin
+---
+# 示例2: 导入已存在的EIP
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-sample-existing
+spec:
+  allocationID: "eip-bp1xxxxxxxxxx"  # 替换为实际的EIP ID
+  releaseStrategy: Never  # 删除CR时不释放EIP
+---
+# 示例3: 使用共享带宽包的EIP
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-sample-cbwp
+spec:
+  bandwidth: "100"
+  internetChargeType: PayByTraffic
+  bandwidthPackageID: "cbwp-bp1xxxxxxxxxx"  # 替换为实际的带宽包ID
+  name: eip-with-bandwidth-package
+  description: "EIP with common bandwidth package"
+  releaseStrategy: OnDelete
+---
+# 示例4: 最小化配置（使用默认值）
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-sample-minimal
+spec:
+  bandwidth: "1"
+  # internetChargeType 默认为 PayByTraffic
+  # releaseStrategy 默认为 OnDelete
+---
+# 示例5: 使用电信单线（非BGP）
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-sample-telecom
+spec:
+  bandwidth: "10"
+  internetChargeType: PayByTraffic
+  isp: ChinaTelecom  # 使用电信单线，不使用默认的BGP多线
+  name: eip-telecom-single-line
+  description: "EIP with China Telecom single line"
+  releaseStrategy: OnDelete
+  tags:
+    isp: telecom
+    line-type: single
