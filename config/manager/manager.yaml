@@ -21,7 +21,7 @@ spec:
       serviceAccountName: alibabacloud-eip-operator-controller-manager
       containers:
       - name: manager
-        image: registry.cn-beijing.aliyuncs.com/chrisliu95/alibabacloud-eip-operator:v1.0.0
+        image: registry.cn-beijing.aliyuncs.com/chrisliu95/alibabacloud-eip-operator:v0.1.0
         imagePullPolicy: Always
         command:
         - /manager
