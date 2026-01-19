@@ -1,0 +1,37 @@
+# DDoS防护（增强版）EIP 示例
+# 提供Tbps级专业DDoS防护能力，适用于大型游戏、重大线上直播等场景
+#
+# 使用限制：
+# - 仅支持按量付费模式（PostPaid）
+# - 仅支持BGP（多线）线路类型
+# - 创建后不支持转换为包年包月付费模式
+# - 支持地域：华北2(北京)、华东1(杭州)、华东2(上海)、中国香港等
+#
+# 注意：DDoS防护（增强版）会产生额外的安全防护费用
+apiVersion: eip.alibabacloud.com/v1alpha1
+kind: EIP
+metadata:
+  name: eip-antiddos-enhanced
+  namespace: default
+spec:
+  # 带宽值（Mbps）
+  bandwidth: "100"
+  # 计费方式：按流量计费
+  internetChargeType: PayByTraffic
+  # 实例计费方式：必须为按量付费
+  instanceChargeType: PostPaid
+  # 线路类型：必须为BGP（多线）或留空使用默认值
+  # isp: BGP
+  # 安全防护类型：DDoS防护（增强版）
+  securityProtectionTypes:
+    - AntiDDoS_Enhanced
+  # EIP名称
+  name: "ddos-protected-eip"
+  # EIP描述
+  description: "EIP with DDoS Anti-DDoS Enhanced protection"
+  # 释放策略
+  releaseStrategy: OnDelete
+  # 标签
+  tags:
+    environment: "production"
+    protection: "ddos-enhanced"

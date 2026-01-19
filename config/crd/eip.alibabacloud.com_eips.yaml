@@ -207,6 +207,13 @@ spec:
               resourceGroupID:
                 description: ResourceGroupID 资源组ID
                 type: string
+              securityProtectionTypes:
+                description: |-
+                  SecurityProtectionTypes 安全防护类型列表
+                  当包含 AntiDDoS_Enhanced 时，表示启用了DDoS防护（增强版）
+                items:
+                  type: string
+                type: array
               status:
                 description: Status EIP状态
                 type: string

@@ -51,22 +51,23 @@ type EIPOptions struct {
 
 // EIPAddress EIP地址信息
 type EIPAddress struct {
-	AllocationID          string
-	Status                string
-	ChargeType            string
-	BandwidthPackageID    string
-	Bandwidth             string
-	IPAddress             string
-	InstanceID            string
-	InstanceType          string
-	InternetChargeType    string
-	PublicIPAddressPoolID string
-	ISP                   string
-	Name                  string
-	ResourceGroupID       string
-	PrivateIPAddress      string
-	Description           string
-	Tags                  map[string]string
+	AllocationID            string
+	Status                  string
+	ChargeType              string
+	BandwidthPackageID      string
+	Bandwidth               string
+	IPAddress               string
+	InstanceID              string
+	InstanceType            string
+	InternetChargeType      string
+	PublicIPAddressPoolID   string
+	ISP                     string
+	Name                    string
+	ResourceGroupID         string
+	PrivateIPAddress        string
+	Description             string
+	Tags                    map[string]string
+	SecurityProtectionTypes []string // 安全防护类型，如 AntiDDoS_Enhanced
 }
 
 const (

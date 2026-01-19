@@ -98,6 +98,19 @@ const (
 	ReleaseStrategyOnDelete ReleaseStrategy = "OnDelete"
 )
 
+// SecurityProtectionType 安全防护类型
+type SecurityProtectionType string
+
+const (
+	// SecurityProtectionTypeAntiDDoSEnhanced DDoS防护（增强版），提供Tbps级专业DDoS防护能力
+	// 使用限制：
+	// - 仅支持按量付费模式（PostPaid）
+	// - 仅支持BGP（多线）线路类型
+	// - 创建后不支持转换为包年包月付费模式
+	// - 支持地域：华北2(北京)、华东1(杭州)、华东2(上海)、中国香港等
+	SecurityProtectionTypeAntiDDoSEnhanced SecurityProtectionType = "AntiDDoS_Enhanced"
+)
+
 // EIPStatus defines the observed state of EIP
 type EIPStatus struct {
 	// AllocationID EIP实例ID
@@ -135,6 +148,10 @@ type EIPStatus struct {
 
 	// Description EIP描述
 	Description string `json:"description,omitempty"`
+
+	// SecurityProtectionTypes 安全防护类型列表
+	// 当包含 AntiDDoS_Enhanced 时，表示启用了DDoS防护（增强版）
+	SecurityProtectionTypes []string `json:"securityProtectionTypes,omitempty"`
 
 	// Conditions EIP状态条件
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
@@ -222,6 +239,11 @@ func (r *EIP) validateEIP() error {
 	// 校验带宽值
 	if err := r.validateBandwidth(); err != nil {
 		allErrs = append(allErrs, err)
+	}
+
+	// 校验 DDoS 防护（增强版）配置
+	if errs := r.validateSecurityProtectionTypes(); len(errs) > 0 {
+		allErrs = append(allErrs, errs...)
 	}
 
 	if len(allErrs) == 0 {
@@ -317,4 +339,56 @@ func (r *EIP) validateBandwidth() *field.Error {
 	}
 
 	return nil
+}
+
+// validateSecurityProtectionTypes 校验安全防护类型配置
+// DDoS防护（增强版）使用限制：
+// - 仅支持按量付费模式（PostPaid）
+// - 仅支持BGP（多线）线路类型
+func (r *EIP) validateSecurityProtectionTypes() []*field.Error {
+	var errs []*field.Error
+
+	// 检查是否配置了 DDoS 防护（增强版）
+	hasAntiDDoSEnhanced := false
+	for _, spt := range r.Spec.SecurityProtectionTypes {
+		if spt == string(SecurityProtectionTypeAntiDDoSEnhanced) {
+			hasAntiDDoSEnhanced = true
+			break
+		}
+	}
+
+	if !hasAntiDDoSEnhanced {
+		return nil
+	}
+
+	// 验证实例计费类型：仅支持按量付费
+	instanceChargeType := r.Spec.InstanceChargeType
+	if instanceChargeType == "" {
+		instanceChargeType = "PostPaid" // 默认值
+	}
+
+	if instanceChargeType != "PostPaid" {
+		errs = append(errs, field.Invalid(
+			field.NewPath("spec").Child("instanceChargeType"),
+			instanceChargeType,
+			"DDoS防护（增强版）仅支持按量付费模式 (PostPaid)，不支持包年包月 (PrePaid)",
+		))
+	}
+
+	// 验证线路类型：DDoS增强版不支持单线 ISP
+	singleLineISPs := map[string]bool{
+		"ChinaTelecom": true,
+		"ChinaUnicom":  true,
+		"ChinaMobile":  true,
+	}
+
+	if r.Spec.ISP != "" && singleLineISPs[r.Spec.ISP] {
+		errs = append(errs, field.Invalid(
+			field.NewPath("spec").Child("isp"),
+			r.Spec.ISP,
+			fmt.Sprintf("DDoS防护（增强版）仅支持 BGP（多线）线路类型，不支持单线 ISP (%s)", r.Spec.ISP),
+		))
+	}
+
+	return errs
 }

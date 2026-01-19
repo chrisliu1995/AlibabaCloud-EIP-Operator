@@ -346,6 +346,7 @@ func (r *EIPReconciler) syncEIPStatus(ctx context.Context, eip *eipv1alpha1.EIP)
 	eip.Status.Name = eipInfo.Name
 	eip.Status.PublicIPAddressPoolID = eipInfo.PublicIPAddressPoolID
 	eip.Status.Description = eipInfo.Description
+	eip.Status.SecurityProtectionTypes = eipInfo.SecurityProtectionTypes
 
 	now := metav1.Now()
 	eip.Status.LastSyncTime = &now

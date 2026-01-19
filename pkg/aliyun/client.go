@@ -120,23 +120,30 @@ func (c *Client) DescribeEipAddresses(ctx context.Context, allocationID, eipAddr
 			tags[tag.Key] = tag.Value
 		}
 
+		// 获取安全防护类型
+		securityProtectionTypes := make([]string, 0)
+		for _, spt := range eip.SecurityProtectionTypes.SecurityProtectionType {
+			securityProtectionTypes = append(securityProtectionTypes, spt)
+		}
+
 		result = append(result, EIPAddress{
-			AllocationID:          eip.AllocationId,
-			Status:                eip.Status,
-			ChargeType:            eip.ChargeType,
-			BandwidthPackageID:    eip.BandwidthPackageId,
-			Bandwidth:             eip.Bandwidth,
-			IPAddress:             eip.IpAddress,
-			InstanceID:            eip.InstanceId,
-			InstanceType:          eip.InstanceType,
-			InternetChargeType:    eip.InternetChargeType,
-			PublicIPAddressPoolID: eip.PublicIpAddressPoolId,
-			ISP:                   eip.ISP,
-			Name:                  eip.Name,
-			ResourceGroupID:       eip.ResourceGroupId,
-			PrivateIPAddress:      eip.PrivateIpAddress,
-			Description:           eip.Descritpion,
-			Tags:                  tags,
+			AllocationID:            eip.AllocationId,
+			Status:                  eip.Status,
+			ChargeType:              eip.ChargeType,
+			BandwidthPackageID:      eip.BandwidthPackageId,
+			Bandwidth:               eip.Bandwidth,
+			IPAddress:               eip.IpAddress,
+			InstanceID:              eip.InstanceId,
+			InstanceType:            eip.InstanceType,
+			InternetChargeType:      eip.InternetChargeType,
+			PublicIPAddressPoolID:   eip.PublicIpAddressPoolId,
+			ISP:                     eip.ISP,
+			Name:                    eip.Name,
+			ResourceGroupID:         eip.ResourceGroupId,
+			PrivateIPAddress:        eip.PrivateIpAddress,
+			Description:             eip.Descritpion,
+			Tags:                    tags,
+			SecurityProtectionTypes: securityProtectionTypes,
 		})
 	}
 
