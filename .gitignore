@@ -28,6 +28,9 @@ config/crd/bases
 # Go workspace file
 go.work
 
+# Vendor
+vendor/
+
 # Credentials and sensitive files
 config/default/credentials.yaml.local
 *.secret
